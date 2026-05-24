@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Errors\" />
+    <Folder Include="Common\Interfaces\" />
+    <Folder Include="Features\Auth\" />
+    <Folder Include="Features\Boards\" />
+    <Folder Include="Features\FocusSessions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KeepFocus.Domain\KeepFocus.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
