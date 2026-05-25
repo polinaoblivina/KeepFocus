@@ -111,7 +111,10 @@ namespace KeepFocus.Domain.Entities
                     .OrderBy(e => e.OccurredAt)
                     .LastOrDefault();
 
-                if (lastHidden != null)
+                var hasReturnedAfterLastHide = lastHidden != null && _tabEvents
+                    .Any(e => e.EventType == TabEventType.Visible && e.OccurredAt > lastHidden.OccurredAt);
+
+                if (lastHidden != null && !hasReturnedAfterLastHide)
                 {
                     var secondsUntilHide = (int)(lastHidden.OccurredAt - LastResumedAt).TotalSeconds;
                     AccumulatedSeconds += Math.Max(0, secondsUntilHide);

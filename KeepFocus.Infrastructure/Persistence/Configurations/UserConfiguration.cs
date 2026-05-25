@@ -32,13 +32,6 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
                 .HasMaxLength(128)
                 .IsRequired();
 
-            b.Property(u => u.MagicLinkToken)
-                .HasColumnName("magic_link_token")
-                .HasMaxLength(128);
-
-            b.Property(u => u.MagicLinkExpiresAt)
-                .HasColumnName("magic_link_expires_at");
-
             b.Property(u => u.CreatedAt)
                 .HasColumnName("created_at")
                 .IsRequired();

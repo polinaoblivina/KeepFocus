@@ -9,8 +9,6 @@ namespace KeepFocus.Domain.Entities
     {
         public Email Email { get; private set; }
         public string PasswordHash { get; private set; }
-        public string? MagicLinkToken { get; private set; }
-        public DateTime? MagicLinkExpiresAt { get; private set; }
         public DateTime CreatedAt { get; private set; }
         private User() : base() { }
 
@@ -26,33 +24,9 @@ namespace KeepFocus.Domain.Entities
             var validatedEmail = Email.Create(email);
             return new User(validatedEmail, passwordHash);
         }
-        public void IssueMagicLink(string token, TimeSpan validity)
-        {
-            MagicLinkToken = token;
-            MagicLinkExpiresAt = DateTime.UtcNow.Add(validity);
-        }
-        public bool TryConsumeMagicLink(string token)
-        {
-            if (MagicLinkToken is null || MagicLinkExpiresAt is null)
-                return false;
-
-            if (MagicLinkToken != token || DateTime.UtcNow > MagicLinkExpiresAt)
-            {
-                ClearMagicLink();
-                return false;
-            }
-
-            ClearMagicLink();
-            return true;
-        }
         public void UpdatePasswordHash(string newHash)
         {
             PasswordHash = newHash;
-        }
-        private void ClearMagicLink()
-        {
-            MagicLinkToken = null;
-            MagicLinkExpiresAt = null;
         }
     }
 }

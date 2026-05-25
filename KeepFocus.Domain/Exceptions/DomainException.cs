@@ -22,4 +22,7 @@ namespace KeepFocus.Domain.Exceptions
 
     public sealed class InvalidPositionException(int position)
         : DomainException($"Position '{position}' is not valid. Must be a positive integer.");
+
+    public sealed class EntityNotFoundException(string entityName, Guid id)
+        : DomainException($"{entityName} '{id}' not found.");
 }

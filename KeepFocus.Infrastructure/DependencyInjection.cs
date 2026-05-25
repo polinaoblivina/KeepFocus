@@ -1,10 +1,15 @@
-﻿using KeepFocus.Domain.Interfaces;
+﻿using KeepFocus.Application.Common.Interfaces;
+using KeepFocus.Domain.Interfaces;
+using KeepFocus.Infrastructure.Authentication;
 using KeepFocus.Infrastructure.BackgroundJobs;
 using KeepFocus.Infrastructure.Persistence;
 using KeepFocus.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace KeepFocus.Infrastructure
 {
@@ -23,6 +28,29 @@ namespace KeepFocus.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBoardRepository, BoardRepository>();
             services.AddScoped<IFocusSessionRepository, FocusSessionRepository>();
+
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            var secret = configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["Jwt:Issuer"] ?? "KeepFocus",
+                        ValidAudience = configuration["Jwt:Audience"] ?? "KeepFocus",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                        ClockSkew = TimeSpan.FromSeconds(30),
+                    };
+                });
+
+            services.AddAuthorization();
 
             services.AddHostedService<AbandonStaleSessionsJob>();
 

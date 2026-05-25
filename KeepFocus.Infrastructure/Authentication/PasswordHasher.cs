@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BCrypt.Net;
+﻿using KeepFocus.Application.Common.Interfaces;
 
-namespace KeepFocus.Infrastructure.Authentication
+namespace KeepFocus.Infrastructure.Authentication;
+
+public sealed class PasswordHasher : IPasswordHasher
 {
-    public static class PasswordHasher
-    {
-        private const int WorkFactor = 12;
-
-        public static string Hash(string password) =>
-            BCrypt.Net.BCrypt.HashPassword(password, WorkFactor);
-
-        public static bool Verify(string password, string hash) =>
-            BCrypt.Net.BCrypt.Verify(password, hash);
-    }
+    private const int WorkFactor = 12;
+    public string Hash(string password) => BCrypt.Net.BCrypt.HashPassword(password, WorkFactor);
+    public bool Verify(string password, string hash) => BCrypt.Net.BCrypt.Verify(password, hash);
 }
