@@ -9,9 +9,6 @@ namespace KeepFocus.Domain.Entities
 {
     public sealed class FocusSession : Entity
     {
-        public const int HeartbeatTimeoutSeconds = 60;
-        public const int HeartbeatIntervalSeconds = 20;
-
         public Guid UserId { get; private set; }
         public Guid? CardId { get; private set; }
         public SessionType Type { get; private set; }
@@ -22,11 +19,13 @@ namespace KeepFocus.Domain.Entities
         public SessionStatus Status { get; private set; }
         public DateTime StartedAt { get; private set; }
         public DateTime? EndedAt { get; private set; }
-        public DateTime LastHeartbeatAt { get; private set; }
+
         private readonly List<TabEvent> _tabEvents = [];
         public IReadOnlyList<TabEvent> TabEvents => _tabEvents.AsReadOnly();
+
         private readonly List<SessionBreak> _breaks = [];
         public IReadOnlyList<SessionBreak> Breaks => _breaks.AsReadOnly();
+
         public int GetCurrentElapsed()
         {
             if (Status == SessionStatus.Paused ||
@@ -47,9 +46,6 @@ namespace KeepFocus.Domain.Entities
             .Count(e => e.EventType == TabEventType.Hidden);
         public bool IsActive => Status == SessionStatus.Active;
         public bool IsCompleted => Status == SessionStatus.Completed;
-        public bool IsTimedOut =>
-            Status == SessionStatus.Active &&
-            DateTime.UtcNow - LastHeartbeatAt > TimeSpan.FromSeconds(HeartbeatTimeoutSeconds);
 
         private FocusSession() : base() { }
         private FocusSession(Guid userId, Guid? cardId, SessionType type, FocusMode mode, Duration plannedDuration) : base()
@@ -63,7 +59,6 @@ namespace KeepFocus.Domain.Entities
             Status = SessionStatus.Active;
             StartedAt = DateTime.UtcNow;
             LastResumedAt = DateTime.UtcNow;  
-            LastHeartbeatAt = DateTime.UtcNow;
         }
 
         public static FocusSession StartPomodoro(Guid userId, FocusMode mode, Guid? cardId = null) =>
@@ -72,11 +67,6 @@ namespace KeepFocus.Domain.Entities
         public static FocusSession StartCustom(Guid userId, FocusMode mode, int durationSeconds, Guid? cardId = null) =>
             new(userId, cardId, SessionType.Custom, mode, Duration.Create(durationSeconds));
 
-        public void Heartbeat()
-        {
-            EnsureActive();
-            LastHeartbeatAt = DateTime.UtcNow;
-        }
         public void Pause()
         {
             EnsureActive();
