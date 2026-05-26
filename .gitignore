@@ -8,21 +8,31 @@ bin/
 obj/
 Debug/
 Release/
-x64/0
+x64/
 x86/
 
 project.lock.json
 *.genruntimeconfig
-
 packages/
 *.nupkg
 *.snupkg
 
-TestResults/
-
 .idea/
-
 .vscode/
+*.DotSettings.user
 
 Thumbs.db
 desktop.ini
+.DS_Store
+
+appsettings.Development.json
+
+node_modules/
+dist/
+.env
+.env.local
+.env.development
+.env.production
+
+*.log
+logs/

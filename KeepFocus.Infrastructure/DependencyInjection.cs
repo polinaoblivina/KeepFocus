@@ -46,7 +46,6 @@ namespace KeepFocus.Infrastructure
                         ValidIssuer = configuration["Jwt:Issuer"] ?? "KeepFocus",
                         ValidAudience = configuration["Jwt:Audience"] ?? "KeepFocus",
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                        ClockSkew = TimeSpan.FromSeconds(30),
                     };
                 });
 
