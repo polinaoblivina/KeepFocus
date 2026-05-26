@@ -56,10 +56,6 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
             b.Property(x => x.StartedAt).HasColumnName("started_at").IsRequired();
             b.Property(x => x.EndedAt).HasColumnName("ended_at");
 
-            b.Property(x => x.LastHeartbeatAt)
-                .HasColumnName("last_heartbeat_at")
-                .IsRequired();
-
             b.HasIndex(x => x.UserId);
 
             b.HasIndex(x => new { x.UserId, x.Status })

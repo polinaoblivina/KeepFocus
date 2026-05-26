@@ -38,17 +38,6 @@ namespace KeepFocus.Infrastructure.Persistence.Repositories
             return sessions.AsReadOnly();
         }
 
-        public async Task<IReadOnlyList<FocusSession>> GetTimedOutSessionsAsync(CancellationToken ct = default)
-        {
-            var cutoff = DateTime.UtcNow.AddSeconds(-FocusSession.HeartbeatTimeoutSeconds);
-
-            var sessions = await db.FocusSessions
-                .Where(s => s.Status == SessionStatus.Active && s.LastHeartbeatAt < cutoff)
-                .ToListAsync(ct);
-
-            return sessions.AsReadOnly();
-        }
-
         public async Task AddAsync(FocusSession session, CancellationToken ct = default) =>
             await db.FocusSessions.AddAsync(session, ct);
 

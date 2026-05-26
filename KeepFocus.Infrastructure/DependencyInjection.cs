@@ -1,7 +1,6 @@
 ﻿using KeepFocus.Application.Common.Interfaces;
 using KeepFocus.Domain.Interfaces;
 using KeepFocus.Infrastructure.Authentication;
-using KeepFocus.Infrastructure.BackgroundJobs;
 using KeepFocus.Infrastructure.Persistence;
 using KeepFocus.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -50,9 +49,6 @@ namespace KeepFocus.Infrastructure
                 });
 
             services.AddAuthorization();
-
-            services.AddHostedService<AbandonStaleSessionsJob>();
-
             return services;
         }
     }
