@@ -7,6 +7,6 @@
     <Project Path="KeepFocus.Application/KeepFocus.Application.csproj" Id="ddff8087-7a03-4e96-8ba7-2d8bf1e918de" />
     <Project Path="KeepFocus.Domain/KeepFocus.Domain.csproj" Id="789241c9-9950-40be-bcaf-6e53fee13820" />
     <Project Path="KeepFocus.Infrastructure/KeepFocus.Infrastructure.csproj" Id="a600d060-a9fb-4b34-a583-e6f7c6da24d2" />
-    <Project Path="KeepFocus.WebAPI/KeepFocus.WebAPI.csproj" Id="85026baf-1088-47f7-bf59-b23386d72520" />
+    <Project Path="KeepFocus.WebAPI/KeepFocus.WebAPI.csproj" />
   </Folder>
 </Solution>
