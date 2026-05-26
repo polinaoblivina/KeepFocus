@@ -8,10 +8,7 @@ namespace KeepFocus.Domain.Value_Objects
 {
     public sealed class Email : IEquatable<Email>
     {
-        private static readonly Regex EmailRegex = new(
-            @"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase,
-            TimeSpan.FromMilliseconds(250));
+        private static readonly Regex EmailRegex = new(@"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public string Value { get; }
         private Email(string value) => Value = value;
 

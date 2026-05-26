@@ -46,6 +46,19 @@ namespace KeepFocus.Infrastructure
                         ValidAudience = configuration["Jwt:Audience"] ?? "KeepFocus",
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = ctx =>
+                        {
+                            var token = ctx.Request.Query["access_token"];
+                            var path = ctx.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(token) && path.StartsWithSegments("/hubs"))
+                                ctx.Token = token;
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             services.AddAuthorization();

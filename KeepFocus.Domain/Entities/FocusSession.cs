@@ -79,7 +79,6 @@ namespace KeepFocus.Domain.Entities
                 throw new SessionNotActiveException();
 
             LastResumedAt = DateTime.UtcNow;   
-            LastHeartbeatAt = DateTime.UtcNow;
             Status = SessionStatus.Active;
         }
         public void Complete()
@@ -95,25 +94,7 @@ namespace KeepFocus.Domain.Entities
                 return;
 
             if (Status == SessionStatus.Active)
-            {
-                var lastHidden = _tabEvents
-                    .Where(e => e.EventType == TabEventType.Hidden)
-                    .OrderBy(e => e.OccurredAt)
-                    .LastOrDefault();
-
-                var hasReturnedAfterLastHide = lastHidden != null && _tabEvents
-                    .Any(e => e.EventType == TabEventType.Visible && e.OccurredAt > lastHidden.OccurredAt);
-
-                if (lastHidden != null && !hasReturnedAfterLastHide)
-                {
-                    var secondsUntilHide = (int)(lastHidden.OccurredAt - LastResumedAt).TotalSeconds;
-                    AccumulatedSeconds += Math.Max(0, secondsUntilHide);
-                }
-                else
-                {
-                    AccumulatedSeconds = GetCurrentElapsed();
-                }
-            }
+                AccumulatedSeconds = GetCurrentElapsed();
 
             Status = SessionStatus.Abandoned;
             EndedAt = DateTime.UtcNow;

@@ -1,23 +1,26 @@
 using KeepFocus.Application;
 using KeepFocus.Infrastructure;
+using KeepFocus.WebAPI.Hubs;
 using KeepFocus.WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
         policy
-            .WithOrigins(
-                "http://localhost:5173",  
-                "http://localhost:3000") 
+            .WithOrigins("http://localhost:5173", "http://localhost:3000")
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
+
 
 var app = builder.Build();
 
@@ -28,6 +31,8 @@ app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers();
+app.MapHub<SessionHub>("/hubs/session");
 
 app.Run();
