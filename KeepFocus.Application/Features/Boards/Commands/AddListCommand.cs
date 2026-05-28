@@ -1,8 +1,9 @@
-﻿using KeepFocus.Application.Common;
+﻿using FluentValidation;
+using KeepFocus.Application.Common;
 using KeepFocus.Application.Common.Errors;
 using KeepFocus.Application.Features.Boards.DTOs;
+using KeepFocus.Domain.Entities;
 using KeepFocus.Domain.Interfaces;
-using FluentValidation;
 using MediatR;
 
 namespace KeepFocus.Application.Features.Boards.Commands 
@@ -20,8 +21,9 @@ namespace KeepFocus.Application.Features.Boards.Commands
 
             if (board is null) return Error.NotFound("Board not found.");
             if (board.UserId != cmd.UserId) return Error.Forbidden("Access denied.");
-
             var list = board.AddList(cmd.Title);
+
+            await boards.AddListAsync(list, ct);
             await boards.SaveChangesAsync(ct);
 
             return new ListDto(list.Id, list.Title, list.Position, []);

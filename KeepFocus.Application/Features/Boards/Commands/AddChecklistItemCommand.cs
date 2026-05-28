@@ -25,6 +25,7 @@ namespace KeepFocus.Application.Features.Boards.Commands
             if (board.UserId != cmd.UserId) return Error.Forbidden("Access denied.");
 
             var item = board.AddChecklistItem(cmd.CardId, cmd.ChecklistId, cmd.Content);
+            await boards.AddChecklistItemAsync(item, ct); 
             await boards.SaveChangesAsync(ct);
 
             return new ChecklistItemDto(item.Id, item.Content, item.IsChecked, item.Position);

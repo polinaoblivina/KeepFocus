@@ -22,6 +22,7 @@ namespace KeepFocus.Application.Features.Boards.Commands
             if (board.UserId != cmd.UserId) return Error.Forbidden("Access denied.");
 
             var card = board.AddCard(cmd.ListId, cmd.Title);
+            await boards.AddCardAsync(card, ct); 
             await boards.SaveChangesAsync(ct);
 
             return new CardDto(card.Id, card.Title, card.Description, card.Position, card.DueDate, []);

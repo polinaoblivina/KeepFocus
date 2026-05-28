@@ -1,5 +1,10 @@
 <Solution>
-  <Folder Name="/frontend/" />
+  <Folder Name="/frontend/">
+    <Project Path="keepfocus-client/keepfocus-client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
   </Folder>

@@ -12,7 +12,7 @@ namespace KeepFocus.WebAPI.Controllers
     public abstract class BaseController(IMediator mediator) : ControllerBase
     {
         protected readonly IMediator Mediator = mediator;
-        protected Guid UserId => Guid.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        protected Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         protected IActionResult MapError(Error error)
         {
             switch (error.Type)

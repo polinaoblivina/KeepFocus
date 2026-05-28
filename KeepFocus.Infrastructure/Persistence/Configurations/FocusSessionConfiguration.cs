@@ -62,6 +62,9 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
                 .HasFilter("status = 'Active'")
                 .HasDatabaseName("ix_focus_sessions_user_active");
 
+            b.Ignore(x => x.TabEvents);
+            b.Ignore(x => x.Breaks);
+
             b.HasMany<TabEvent>("_tabEvents")
                 .WithOne()
                 .HasForeignKey(e => e.SessionId)

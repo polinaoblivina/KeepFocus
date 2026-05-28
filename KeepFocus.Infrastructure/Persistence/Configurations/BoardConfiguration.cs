@@ -33,6 +33,7 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
             b.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
 
             b.HasIndex(x => x.UserId);
+            b.Ignore(x => x.Lists);
 
             b.HasMany<Domain.Entities.List>("_lists")
                 .WithOne()
@@ -62,6 +63,7 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
             b.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
 
             b.HasIndex(x => new { x.BoardId, x.Position });
+            b.Ignore(x => x.Cards);
 
             b.HasMany<Card>("_cards")
                 .WithOne()
@@ -97,6 +99,7 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
             b.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
 
             b.HasIndex(x => new { x.ListId, x.Position });
+            b.Ignore(x => x.Checklists);
 
             b.HasMany<Checklist>("_checklists")
                 .WithOne()
@@ -123,6 +126,11 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             b.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
+
+            b.Ignore(x => x.CompletedCount);
+            b.Ignore(x => x.TotalCount);
+            b.Ignore(x => x.ProgressPercent);
+            b.Ignore(x => x.Items);
 
             b.HasMany<ChecklistItem>("_items")
                 .WithOne()

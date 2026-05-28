@@ -3,13 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace KeepFocus.WebAPI.Hubs
 {
     [Authorize]
     public sealed class SessionHub(IMediator mediator) : Hub
     {
-        private Guid UserId => Guid.Parse(Context.User!.FindFirst(JwtRegisteredClaimNames.Sub)!.Value);
+        private Guid UserId => Guid.Parse(Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
         public async Task Pause(Guid sessionId)
         {

@@ -42,6 +42,18 @@ namespace KeepFocus.Infrastructure.Persistence.Repositories
             if (board is not null) db.Boards.Remove(board);
         }
 
+        public async Task AddListAsync(Domain.Entities.List list, CancellationToken ct = default) =>
+           await db.Lists.AddAsync(list, ct);
+
+        public async Task AddCardAsync(Card card, CancellationToken ct = default) =>
+            await db.Cards.AddAsync(card, ct);
+
+        public async Task AddChecklistAsync(Checklist checklist, CancellationToken ct = default) =>
+            await db.Checklists.AddAsync(checklist, ct);
+
+        public async Task AddChecklistItemAsync(ChecklistItem item, CancellationToken ct = default) =>
+            await db.ChecklistItems.AddAsync(item, ct);
+
         public Task SaveChangesAsync(CancellationToken ct = default) =>
             db.SaveChangesAsync(ct);
     }

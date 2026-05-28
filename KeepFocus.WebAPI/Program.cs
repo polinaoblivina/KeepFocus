@@ -2,9 +2,9 @@ using KeepFocus.Application;
 using KeepFocus.Infrastructure;
 using KeepFocus.WebAPI.Hubs;
 using KeepFocus.WebAPI.Middleware;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
