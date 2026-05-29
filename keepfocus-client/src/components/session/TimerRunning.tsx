@@ -13,9 +13,7 @@ interface TimerRunningProps {
     onAbandon: () => void;
 }
 
-export default function TimerRunning({
-    session, elapsed, status, onPauseResume, onComplete, onAbandon
-}: TimerRunningProps) {
+export default function TimerRunning({ session, elapsed, status, onPauseResume, onComplete, onAbandon}: TimerRunningProps) {
     const [showAbandonConfirm, setShowAbandonConfirm] = useState(false);
     const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
 

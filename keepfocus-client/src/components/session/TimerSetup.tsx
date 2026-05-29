@@ -11,10 +11,7 @@ interface TimerSetupProps {
     onStart: () => void;
 }
 
-export default function TimerSetup({
-    mode, type, customMins, starting,
-    onModeChange, onTypeChange, onCustomMinsChange, onStart
-}: TimerSetupProps) {
+export default function TimerSetup({ mode, type, customMins, starting, onModeChange, onTypeChange, onCustomMinsChange, onStart }: TimerSetupProps) {
     return (
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-6 gap-6">
 

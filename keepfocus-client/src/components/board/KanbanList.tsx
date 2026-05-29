@@ -17,9 +17,7 @@ interface KanbanListProps {
     onStartSession: (cardId: string) => void;
 }
 
-export default function KanbanList({
-    list, boardId, onAddCard, onDeleteCard, onDeleteList, onRenameList, onUpdateCard, onStartSession
-}: KanbanListProps) {
+export default function KanbanList({ list, boardId, onAddCard, onDeleteCard, onDeleteList, onRenameList, onUpdateCard, onStartSession }: KanbanListProps) {
     const [addingCard, setAddingCard] = useState(false);
     const [newCardTitle, setNewCardTitle] = useState('');
     const [editingTitle, setEditingTitle] = useState(false);

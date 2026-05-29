@@ -35,9 +35,7 @@ function playCompletionSound() {
             osc.start(t);
             osc.stop(t + 0.45);
         });
-    } catch {
-        // ignore bebebe
-    }
+    } catch {/**/}
 }
 
 async function requestNotificationPermission() {
@@ -45,7 +43,6 @@ async function requestNotificationPermission() {
         await Notification.requestPermission();
     }
 }
-
 function showCompletionNotification() {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
@@ -109,12 +106,7 @@ export default function FocusTimerModal({ cardId, card, boardId, onClose, onCard
         }
     }, [startTimer, stopTimer]);
 
-    const isTimedOut =
-        session !== null &&
-        step === 'running' &&
-        !userContinued &&
-        status === 'Active' &&
-        elapsed >= session.plannedDurationSeconds;
+    const isTimedOut = session !== null && step === 'running' && !userContinued && status === 'Active' && elapsed >= session.plannedDurationSeconds;
 
     useEffect(() => {
         if (!isTimedOut || !session || autoCompletedRef.current) return;
@@ -165,7 +157,8 @@ export default function FocusTimerModal({ cardId, card, boardId, onClose, onCard
     }, [stopTimer]);
 
     async function handleStart() {
-        setStarting(true); setError(null);
+        setStarting(true);
+        setError(null);
         await requestNotificationPermission();
         try {
             const dto = await startSession(mode, type, type === 'Custom' ? customMins * 60 : undefined, cardId ?? undefined);
@@ -273,13 +266,37 @@ export default function FocusTimerModal({ cardId, card, boardId, onClose, onCard
                         <div className="mx-6 mt-2 bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-xs">{error}</div>
                     )}
 
-                    {showSetup && <TimerSetup mode={mode} type={type} customMins={customMins} starting={starting} onModeChange={setMode} onTypeChange={setType} onCustomMinsChange={setCustomMins} onStart={handleStart} />}
-                    {showTimedOut && <TimerTimedOut onComplete={handleComplete} onNewSession={handleNewSession} />}
-                    {showRunning && <TimerRunning session={session!} elapsed={elapsed} status={status} onPauseResume={handlePauseResume} onComplete={handleComplete} onAbandon={handleAbandon} />}
-
+                    {showSetup &&
+                        <TimerSetup
+                            mode={mode}
+                            type={type}
+                            customMins={customMins}
+                            starting={starting}
+                            onModeChange={setMode}
+                            onTypeChange={setType}
+                            onCustomMinsChange={setCustomMins}
+                            onStart={handleStart}
+                        />}
+                    {showTimedOut &&
+                        <TimerTimedOut
+                            onComplete={handleComplete}
+                            onNewSession={handleNewSession}
+                        />}
+                    {showRunning &&
+                        <TimerRunning
+                            session={session!}
+                            elapsed={elapsed}
+                            status={status}
+                            onPauseResume={handlePauseResume}
+                            onComplete={handleComplete}
+                            onAbandon={handleAbandon}
+                        />}
                 </div>
-
-                {localCard && <CardPanel card={localCard} onToggleItem={handleToggleItem} />}
+                {localCard &&
+                    <CardPanel
+                        card={localCard}
+                        onToggleItem={handleToggleItem}
+                    />}
             </div>
         </div>
     );
