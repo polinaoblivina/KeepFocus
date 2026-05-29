@@ -83,7 +83,9 @@ namespace KeepFocus.Domain.Entities
         }
         public void Complete()
         {
-            EnsureActive();
+            if (Status != SessionStatus.Active && Status != SessionStatus.Paused)
+                throw new SessionNotActiveException();
+
             AccumulatedSeconds = GetCurrentElapsed(); 
             Status = SessionStatus.Completed;
             EndedAt = DateTime.UtcNow;
@@ -99,9 +101,11 @@ namespace KeepFocus.Domain.Entities
             Status = SessionStatus.Abandoned;
             EndedAt = DateTime.UtcNow;
         }
-        public TabEvent RecordTabHidden(int visibleDurationSeconds)
+
+        public TabEvent? RecordTabHidden(int visibleDurationSeconds)
         {
-            EnsureActive();
+            if (Status == SessionStatus.Paused) return null;
+            if (Status != SessionStatus.Active) return null;
 
             var ev = new TabEvent(Id, TabEventType.Hidden, visibleDurationSeconds);
             _tabEvents.Add(ev);
@@ -111,13 +115,11 @@ namespace KeepFocus.Domain.Entities
 
             return ev;
         }
-        public TabEvent RecordTabVisible(int hiddenDurationSeconds)
-        {
-            if (Mode == FocusMode.Hard && Status == SessionStatus.Paused)
-                Resume();
 
-            if (Status != SessionStatus.Active)
-                throw new SessionNotActiveException();
+        public TabEvent? RecordTabVisible(int hiddenDurationSeconds)
+        {
+            if (Status != SessionStatus.Active && Status != SessionStatus.Paused)
+                return null;
 
             var ev = new TabEvent(Id, TabEventType.Visible, hiddenDurationSeconds);
             _tabEvents.Add(ev);

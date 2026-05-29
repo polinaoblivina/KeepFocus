@@ -5,7 +5,7 @@ import { getErrorMessage } from '../api/client';
 import { useAuthStore } from '../store/authStore';
 import type { BoardSummaryDto } from '../api/types';
 import ConfirmModal from '../components/ui/ConfirmModal';
-import BoardFormModal from '../components/ui/BoardFormModal';
+import BoardFormModal from '../components/board/BoardFormModal';
 import { Plus, LogOut, Trash2, Layout, ChartNoAxesColumn, Pencil } from 'lucide-react';
 
 export default function BoardsPage() {

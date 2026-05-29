@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getSessionHistory } from '../api/sessions';
 import { getErrorMessage } from '../api/client';
 import type { SessionDto } from '../api/types';
-import { ArrowLeft, Clock, Zap, AlertTriangle, ChartNoAxesColumn } from 'lucide-react';
+import { ArrowLeft, Clock, Zap, AlertTriangle, BarChart2 } from 'lucide-react';
 
 function formatDuration(seconds: number): string {
     const h = Math.floor(seconds / 3600);
@@ -19,6 +19,7 @@ function formatDate(dateStr: string): string {
         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     });
 }
+
 function statusColor(status: SessionDto['status']): string {
     switch (status) {
         case 'Completed': return 'text-green-600 bg-green-50';
@@ -47,7 +48,7 @@ export default function AnalyticsPage() {
     const [from, setFrom] = useState(() => {
         const d = new Date();
         d.setDate(d.getDate() - 30);
-        return d.toISOString().split('T')[0]; 
+        return d.toISOString().split('T')[0];
     });
     const [to, setTo] = useState(() => new Date().toISOString().split('T')[0]);
 
@@ -55,7 +56,10 @@ export default function AnalyticsPage() {
         async function load() {
             setLoading(true);
             try {
-                const data = await getSessionHistory(new Date(from).toISOString(), new Date(to + 'T23:59:59').toISOString());
+                const data = await getSessionHistory(
+                    from + 'T00:00:00Z',
+                    to + 'T23:59:59Z'
+                );
                 setSessions(data);
             } catch (err) {
                 setError(getErrorMessage(err));
@@ -71,7 +75,6 @@ export default function AnalyticsPage() {
 
     const totalSeconds = completed.reduce((sum, s) => sum + s.accumulatedSeconds, 0);
     const totalDistraction = completed.reduce((sum, s) => sum + s.totalDistractionSeconds, 0);
-
     const avgSeconds = completed.length > 0 ? Math.floor(totalSeconds / completed.length) : 0;
 
     return (
@@ -83,13 +86,14 @@ export default function AnalyticsPage() {
                         <ArrowLeft size={20} />
                     </Link>
                     <div className="flex items-center gap-2">
-                        <ChartNoAxesColumn size={20} className="text-blue-600" />
+                        <BarChart2 size={20} className="text-blue-600" />
                         <h1 className="text-lg font-semibold text-gray-900">Аналитика</h1>
                     </div>
                 </div>
             </header>
 
             <main className="max-w-4xl mx-auto px-6 py-8">
+
                 <div className="flex items-center gap-4 mb-8">
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-gray-500">С:</label>
@@ -144,7 +148,7 @@ export default function AnalyticsPage() {
 
                     <div className="bg-white rounded-xl border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-1">
-                            <ChartNoAxesColumn size={15} className="text-red-400" />
+                            <BarChart2 size={15} className="text-red-400" />
                             <p className="text-xs text-gray-500">Прервано</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">{abandoned.length}</p>
@@ -182,9 +186,9 @@ export default function AnalyticsPage() {
 
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm text-gray-900">
-                                            {session.type === 'Pomodoro' ? 'Pomodoro' : 'Custom'}
+                                            {session.type === 'Pomodoro' ? '🍅 Pomodoro' : '⚙️ Custom'}
                                             {' · '}
-                                            {session.mode === 'Soft' ? 'Soft' : 'Hard'}
+                                            {session.mode === 'Soft' ? '🌊 Soft' : '🔥 Hard'}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-0.5">
                                             {formatDate(session.startedAt)}

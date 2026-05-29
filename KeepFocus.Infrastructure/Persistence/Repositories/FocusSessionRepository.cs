@@ -2,9 +2,6 @@
 using KeepFocus.Domain.Enums;
 using KeepFocus.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KeepFocus.Infrastructure.Persistence.Repositories
 {
@@ -22,14 +19,17 @@ namespace KeepFocus.Infrastructure.Persistence.Repositories
                 .Include("_breaks")
                 .FirstOrDefaultAsync(s => s.UserId == userId && s.Status == SessionStatus.Active, ct);
 
-        public async Task<IReadOnlyList<FocusSession>> GetByUserIdAsync(Guid userId,DateTime? from = null,DateTime? to = null,CancellationToken ct = default)
+        public async Task<IReadOnlyList<FocusSession>> GetByUserIdAsync(Guid userId, DateTime? from = null, DateTime? to = null, CancellationToken ct = default)
         {
             var query = db.FocusSessions
                 .Include("_tabEvents")
                 .Where(s => s.UserId == userId);
 
-            if (from.HasValue) query = query.Where(s => s.StartedAt >= from.Value);
-            if (to.HasValue) query = query.Where(s => s.StartedAt <= to.Value);
+            if (from.HasValue)
+                query = query.Where(s => s.StartedAt >= from.Value);
+
+            if (to.HasValue)
+                query = query.Where(s => s.StartedAt <= to.Value);
 
             var sessions = await query
                 .OrderByDescending(s => s.StartedAt)
@@ -37,9 +37,11 @@ namespace KeepFocus.Infrastructure.Persistence.Repositories
 
             return sessions.AsReadOnly();
         }
-
         public async Task AddAsync(FocusSession session, CancellationToken ct = default) =>
             await db.FocusSessions.AddAsync(session, ct);
+
+        public async Task AddTabEventAsync(TabEvent tabEvent, CancellationToken ct = default) =>
+            await db.TabEvents.AddAsync(tabEvent, ct);
 
         public Task SaveChangesAsync(CancellationToken ct = default) =>
             db.SaveChangesAsync(ct);
