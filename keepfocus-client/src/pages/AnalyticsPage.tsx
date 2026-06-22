@@ -186,9 +186,9 @@ export default function AnalyticsPage() {
 
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm text-gray-900">
-                                            {session.type === 'Pomodoro' ? '🍅 Pomodoro' : '⚙️ Custom'}
+                                            {session.type === 'Pomodoro' ? 'Pomodoro' : 'Custom'}
                                             {' · '}
-                                            {session.mode === 'Soft' ? '🌊 Soft' : '🔥 Hard'}
+                                            {session.mode === 'Soft' ? 'Soft' : 'Hard'}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-0.5">
                                             {formatDate(session.startedAt)}
