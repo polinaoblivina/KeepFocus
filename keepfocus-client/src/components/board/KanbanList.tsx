@@ -64,7 +64,7 @@ export default function KanbanList({ list, boardId, onAddCard, onDeleteCard, onD
                             onKeyDown={e => e.key === 'Enter' && handleRenameBlur()}
                             onPointerDown={e => e.stopPropagation()}
                             autoFocus
-                            className="flex-1 px-2 py-1 text-sm font-semibold bg-white rounded border border-blue-400 focus:outline-none"
+                            className="flex-1 px-2 py-1 text-sm font-semibold bg-surface rounded border border-blue-400 focus:outline-none"
                         />
                     ) : (
                         <h3
@@ -114,7 +114,7 @@ export default function KanbanList({ list, boardId, onAddCard, onDeleteCard, onD
                                 autoFocus
                                 rows={2}
                                 onPointerDown={e => e.stopPropagation()}
-                                className="w-full px-3 py-2 text-sm bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-2"
+                                className="w-full px-3 py-2 text-sm bg-surface rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-2"
                             />
                             <div className="flex gap-2">
                                 <button type="submit" className="flex-1 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition-colors">

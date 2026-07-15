@@ -39,7 +39,7 @@ export default function LoginPage() {
                     <p className="text-gray-500 mt-2">Войдите в аккаунт</p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                <div className="bg-surface rounded-2xl shadow-sm border border-gray-200 p-8">
 
                     {error && (
                         <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">

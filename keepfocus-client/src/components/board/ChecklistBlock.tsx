@@ -48,7 +48,7 @@ export default function ChecklistBlock({checklist, onRename, onRemove, onAddItem
                             onBlur={handleRenameBlur}
                             onKeyDown={e => e.key === 'Enter' && handleRenameBlur()}
                             autoFocus
-                            className="flex-1 text-sm font-semibold bg-white border border-blue-400 rounded px-2 py-0.5 focus:outline-none"
+                            className="flex-1 text-sm font-semibold bg-surface border border-blue-400 rounded px-2 py-0.5 focus:outline-none"
                         />
                     ) : (
                         <span
@@ -99,7 +99,7 @@ export default function ChecklistBlock({checklist, onRename, onRemove, onAddItem
                         onChange={e => setNewItem(e.target.value)}
                         placeholder="Новый пункт..."
                         autoFocus
-                        className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
+                        className="w-full px-3 py-1.5 bg-surface border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
                     />
                     <div className="flex gap-2">
                         <button type="submit" className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition-colors">

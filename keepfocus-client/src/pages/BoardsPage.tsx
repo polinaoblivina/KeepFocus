@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getBoards, createBoard, updateBoard, deleteBoard } from '../api/boards';
 import { getErrorMessage } from '../api/client';
-import { useAuthStore } from '../store/authStore';
 import type { BoardSummaryDto } from '../api/types';
 import ConfirmModal from '../components/ui/ConfirmModal';
 import BoardFormModal from '../components/board/BoardFormModal';
-import { Plus, LogOut, Trash2, Layout, ChartNoAxesColumn, Pencil } from 'lucide-react';
+import { Plus, Trash2, Layout, ChartNoAxesColumn, Pencil } from 'lucide-react';
+import ThemeToggle from '../components/ui/ThemeToggle';
+import AccountMenu from '../components/layout/AccountMenu';
 
 export default function BoardsPage() {
     const [boards, setBoards] = useState<BoardSummaryDto[]>([]);
@@ -16,10 +17,6 @@ export default function BoardsPage() {
     const [showCreate, setShowCreate] = useState(false);
     const [editingBoard, setEditingBoard] = useState<BoardSummaryDto | null>(null);
     const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-
-    const navigate = useNavigate();
-    const user = useAuthStore(state => state.user);
-    const logout = useAuthStore(state => state.logout);
 
     useEffect(() => {
         async function loadBoards() {
@@ -66,11 +63,6 @@ export default function BoardsPage() {
         }
     }
 
-    function handleLogout() {
-        logout();
-        navigate('/login');
-    }
-
     if (loading) return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
             <p className="text-gray-500">Загрузка...</p>
@@ -80,19 +72,16 @@ export default function BoardsPage() {
     return (
         <div className="min-h-screen bg-gray-50">
 
-            <header className="bg-white border-b border-gray-200 px-6 py-4">
+            <header className="bg-surface border-b border-gray-200 px-6 py-4">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <h1 className="text-xl font-bold text-gray-900">KeepFocus</h1>
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">{user?.email}</span>
+                        <ThemeToggle />
                         <Link to="/analytics" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                             <ChartNoAxesColumn size={16} />
                             Аналитика
                         </Link>
-                        <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                            <LogOut size={16} />
-                            Выйти
-                        </button>
+                        <AccountMenu />
                     </div>
                 </div>
             </header>
@@ -117,7 +106,7 @@ export default function BoardsPage() {
 
                 {boards.length === 0 ? (
                     <div className="text-center py-20">
-                        <Layout size={48} className="mx-auto text-gray-300 mb-4" />
+                        <Layout size={48} className="mx-auto text-gray-300 dark:text-gray-700 mb-4" />
                         <p className="text-gray-500 mb-4">Нет досок. Создайте первую!</p>
                         <button
                             onClick={() => setShowCreate(true)}
@@ -132,7 +121,7 @@ export default function BoardsPage() {
                             <Link
                                 key={board.id}
                                 to={`/boards/${board.id}`}
-                                className="group bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-blue-300 transition-all"
+                                className="group bg-surface rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-blue-300 transition-all"
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1 min-w-0">

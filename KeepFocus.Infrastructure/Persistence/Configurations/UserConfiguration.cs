@@ -32,6 +32,14 @@ namespace KeepFocus.Infrastructure.Persistence.Configurations
                 .HasMaxLength(128)
                 .IsRequired();
 
+            b.Property(u => u.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100);
+
+            b.Property(u => u.AvatarUrl)
+                .HasColumnName("avatar_url")
+                .HasMaxLength(300);
+
             b.Property(u => u.CreatedAt)
                 .HasColumnName("created_at")
                 .IsRequired();

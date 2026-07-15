@@ -17,7 +17,7 @@ export default function ProgressRing({ elapsed, planned, status }: ProgressRingP
     return (
         <div className="relative">
             <svg width="140" height="140" className="-rotate-90">
-                <circle cx="70" cy="70" r="54" fill="none" stroke="#f3f4f6" strokeWidth="8" />
+                <circle cx="70" cy="70" r="54" fill="none" className="stroke-gray-200" strokeWidth="8" />
                 <circle
                     cx="70" cy="70" r="54"
                     fill="none"

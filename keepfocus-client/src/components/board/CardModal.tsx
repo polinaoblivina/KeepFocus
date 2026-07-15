@@ -147,9 +147,9 @@ export default function CardModal({ card, boardId, onClose, onUpdate }: CardModa
                         {editingTitle ? (
                             <input type="text" value={title} onChange={e => setTitle(e.target.value)}
                                 onBlur={saveTitle} onKeyDown={e => e.key === 'Enter' && saveTitle()} autoFocus
-                                className="w-full text-xl font-bold text-gray-900 bg-white border border-blue-400 rounded-lg px-3 py-1.5 focus:outline-none" />
+                                className="w-full text-xl font-bold text-gray-900 bg-surface border border-blue-400 rounded-lg px-3 py-1.5 focus:outline-none" />
                         ) : (
-                            <h2 className="text-xl font-bold text-gray-900 cursor-pointer hover:bg-white rounded-lg px-3 py-1.5 -ml-3" onClick={() => setEditingTitle(true)}>
+                            <h2 className="text-xl font-bold text-gray-900 cursor-pointer hover:bg-surface rounded-lg px-3 py-1.5 -ml-3" onClick={() => setEditingTitle(true)}>
                                 {local.title}
                             </h2>
                         )}
@@ -168,7 +168,7 @@ export default function CardModal({ card, boardId, onClose, onUpdate }: CardModa
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Дедлайн</span>
                         </div>
                         <input type="date" value={dueDate} onChange={e => saveDueDate(e.target.value)}
-                            className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            className="px-3 py-1.5 bg-surface border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         {dueDate && (
                             <button onClick={() => saveDueDate('')} className="ml-2 text-xs text-gray-400 hover:text-red-500 transition-colors">Убрать</button>
                         )}
@@ -183,14 +183,14 @@ export default function CardModal({ card, boardId, onClose, onUpdate }: CardModa
                             <div>
                                 <textarea value={desc} onChange={e => setDesc(e.target.value)} autoFocus rows={4}
                                     placeholder="Добавьте описание..."
-                                    className="w-full px-3 py-2 bg-white border border-blue-400 rounded-lg text-sm focus:outline-none resize-none" />
+                                    className="w-full px-3 py-2 bg-surface border border-blue-400 rounded-lg text-sm focus:outline-none resize-none" />
                                 <div className="flex gap-2 mt-2">
                                     <button onClick={saveDesc} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition-colors">Сохранить</button>
                                     <button onClick={() => { setEditingDesc(false); setDesc(local.description ?? ''); }} className="px-3 py-1.5 text-gray-600 rounded-lg text-xs hover:bg-gray-200 transition-colors">Отмена</button>
                                 </div>
                             </div>
                         ) : (
-                            <div onClick={() => setEditingDesc(true)} className="min-h-[60px] px-3 py-2 bg-white rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors">
+                            <div onClick={() => setEditingDesc(true)} className="min-h-[60px] px-3 py-2 bg-surface rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors">
                                 {local.description || <span className="text-gray-400">Добавьте описание...</span>}
                             </div>
                         )}
@@ -213,14 +213,14 @@ export default function CardModal({ card, boardId, onClose, onUpdate }: CardModa
                         <form onSubmit={handleAddChecklist} className="flex gap-2">
                             <input type="text" value={newChecklistTitle} onChange={e => setNewChecklistTitle(e.target.value)}
                                 placeholder="Название чеклиста..." autoFocus
-                                className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                className="flex-1 px-3 py-2 bg-surface border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             <button type="submit" className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors">Добавить</button>
                             <button type="button" onClick={() => { setAddingChecklist(false); setNewChecklistTitle(''); }}
                                 className="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 transition-colors">Отмена</button>
                         </form>
                     ) : (
                         <button onClick={() => setAddingChecklist(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-600 transition-colors">
+                            className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-600 transition-colors">
                             <CheckSquare size={14} />
                             Добавить чеклист
                         </button>

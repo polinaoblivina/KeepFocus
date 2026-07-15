@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import BoardsPage from './pages/BoardsPage';
 import BoardPage from './pages/BoardPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import ProfilePage from './pages/ProfilePage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
     const isAuthenticated = useAuthStore(state => state.isAuthenticated);
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="/boards" element={<PrivateRoute><BoardsPage /></PrivateRoute>} />
                 <Route path="/boards/:boardId" element={<PrivateRoute><BoardPage /></PrivateRoute>} />
                 <Route path="/analytics" element={<PrivateRoute><AnalyticsPage /></PrivateRoute>} />
+                <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
                 <Route path="*" element={<Navigate to="/boards" replace />} />
             </Routes>

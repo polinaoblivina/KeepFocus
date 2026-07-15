@@ -7,6 +7,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': 'http://localhost:5220',
+            '/avatars': 'http://localhost:5220',
             '/hubs': {
                 target: 'http://localhost:5220',
                 ws: true

@@ -3,12 +3,16 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getBoard, addList, renameList, deleteList, addCard, deleteCard } from '../api/boards';
 import { getErrorMessage } from '../api/client';
 import type { BoardDto, CardDto, ListDto } from '../api/types';
-import { ArrowLeft, Plus, Timer } from 'lucide-react';
-import {DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners, KeyboardSensor } from '@dnd-kit/core';
+import { ArrowLeft, Plus, Timer, Image as ImageIcon } from 'lucide-react';
+import ThemeToggle from '../components/ui/ThemeToggle';
+import AccountMenu from '../components/layout/AccountMenu';
+import BoardBackgroundModal from '../components/board/BoardBackgroundModal';
+import { useBoardBackground } from '../hooks/UseBoardBackground';
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners, KeyboardSensor } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import KanbanList from '../components/board/KanbanList';
 import FocusTimerModal from '../components/session/FocusTimerModal';
-import { useBoardDnd } from '../hooks/useBoardDnd';
+import { useBoardDnd } from '../hooks/UseBoardDnd';
 
 export default function BoardPage() {
     const [board, setBoard] = useState<BoardDto | null>(null);
@@ -23,6 +27,9 @@ export default function BoardPage() {
 
     const { boardId } = useParams<{ boardId: string }>();
     const navigate = useNavigate();
+
+    const [showBg, setShowBg] = useState(false);
+    const { bg, setBg } = useBoardBackground(boardId ?? null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -123,14 +130,14 @@ export default function BoardPage() {
         </div>
     );
 
-    const sessionCard = sessionCardId? board.lists.flatMap(l => l.cards).find(c => c.id === sessionCardId) ?? null : null;
+    const sessionCard = sessionCardId ? board.lists.flatMap(l => l.cards).find(c => c.id === sessionCardId) ?? null : null;
     const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
     const listIds = sortedLists.map(l => l.id);
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
 
-            <header className="bg-white border-b border-gray-200 px-6 py-3 flex-shrink-0">
+            <header className="bg-surface border-b border-gray-200 px-6 py-3 flex-shrink-0">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <button onClick={() => navigate('/boards')} className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -138,13 +145,24 @@ export default function BoardPage() {
                         </button>
                         <h1 className="text-lg font-semibold text-gray-900">{board.title}</h1>
                     </div>
-                    <button
-                        onClick={() => { setSessionCardId(null); setShowTimer(true); }}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-                    >
-                        <Timer size={15} />
-                        Фокус-сессия
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <button
+                            onClick={() => setShowBg(true)}
+                            title="Фон доски"
+                            className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                        >
+                            <ImageIcon size={18} />
+                        </button>
+                        <button
+                            onClick={() => { setSessionCardId(null); setShowTimer(true); }}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <Timer size={15} />
+                            Фокус-сессия
+                        </button>
+                        <AccountMenu />
+                    </div>
                 </div>
             </header>
 
@@ -156,8 +174,12 @@ export default function BoardPage() {
                 onDragEnd={handleDragEnd}
             >
                 <SortableContext items={listIds} strategy={horizontalListSortingStrategy}>
-                    <div className="flex-1 overflow-x-auto p-6">
-                        <div className="flex gap-4 h-full items-start">
+                    <div
+                        className="flex-1 overflow-x-auto p-6 bg-gray-100 bg-cover bg-center relative"
+                        style={bg ? { backgroundImage: /^(linear|radial)-gradient/.test(bg) ? bg : `url("${bg}")` } : undefined}
+                    >
+                        {bg && <div className="absolute inset-0 bg-gray-100/35 pointer-events-none" />}
+                        <div className="relative flex gap-4 h-full items-start">
 
                             {sortedLists.map(list => (
                                 <KanbanList
@@ -175,7 +197,7 @@ export default function BoardPage() {
 
                             <div className="flex-shrink-0 w-72">
                                 {addingList ? (
-                                    <form onSubmit={handleAddList} className="bg-white rounded-xl p-3 shadow-sm">
+                                    <form onSubmit={handleAddList} className="bg-surface rounded-xl p-3 shadow-sm">
                                         <input
                                             type="text" value={newListTitle}
                                             onChange={e => setNewListTitle(e.target.value)}
@@ -188,7 +210,7 @@ export default function BoardPage() {
                                         </div>
                                     </form>
                                 ) : (
-                                    <button onClick={() => setAddingList(true)} className="w-full flex items-center gap-2 px-4 py-3 bg-white/70 hover:bg-white rounded-xl text-gray-600 hover:text-gray-900 text-sm font-medium transition-all shadow-sm">
+                                    <button onClick={() => setAddingList(true)} className="w-full flex items-center gap-2 px-4 py-3 bg-surface/70 hover:bg-surface rounded-xl text-gray-600 hover:text-gray-900 text-sm font-medium transition-all shadow-sm">
                                         <Plus size={16} />
                                         Добавить список
                                     </button>
@@ -201,7 +223,7 @@ export default function BoardPage() {
 
                 <DragOverlay>
                     {activeCard && (
-                        <div className="bg-white rounded-lg p-3 shadow-xl rotate-2 opacity-90 w-72">
+                        <div className="bg-surface rounded-lg p-3 shadow-xl rotate-2 opacity-90 w-72">
                             <p className="text-sm text-gray-900 font-medium">{activeCard.title}</p>
                         </div>
                     )}
@@ -221,6 +243,14 @@ export default function BoardPage() {
                     boardId={boardId ?? null}
                     onClose={() => setShowTimer(false)}
                     onCardUpdate={handleCardUpdate}
+                />
+            )}
+
+            {showBg && (
+                <BoardBackgroundModal
+                    current={bg}
+                    onSelect={(v) => { setBg(v); setShowBg(false); }}
+                    onClose={() => setShowBg(false)}
                 />
             )}
 

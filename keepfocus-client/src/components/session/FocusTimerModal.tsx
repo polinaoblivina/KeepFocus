@@ -248,7 +248,7 @@ export default function FocusTimerModal({ cardId, card, boardId, onClose, onCard
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4">
-            <div className={`bg-white rounded-2xl shadow-2xl overflow-hidden flex max-h-[90vh] ${localCard ? 'w-full max-w-3xl' : 'w-full max-w-sm'}`}>
+            <div className={`bg-surface rounded-2xl shadow-2xl overflow-hidden flex max-h-[90vh] ${localCard ? 'w-full max-w-3xl' : 'w-full max-w-sm'}`}>
 
                 <div className="flex-1 flex flex-col">
 

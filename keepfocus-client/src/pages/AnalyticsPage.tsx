@@ -4,7 +4,8 @@ import { getSessionHistory } from '../api/sessions';
 import { getErrorMessage } from '../api/client';
 import type { SessionDto } from '../api/types';
 import { ArrowLeft, Clock, Zap, AlertTriangle, BarChart2 } from 'lucide-react';
-
+import ThemeToggle from '../components/ui/ThemeToggle';
+import AccountMenu from '../components/layout/AccountMenu';
 function formatDuration(seconds: number): string {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -80,14 +81,18 @@ export default function AnalyticsPage() {
     return (
         <div className="min-h-screen bg-gray-50">
 
-            <header className="bg-white border-b border-gray-200 px-6 py-4">
+            <header className="bg-surface border-b border-gray-200 px-6 py-4">
                 <div className="max-w-4xl mx-auto flex items-center gap-4">
                     <Link to="/boards" className="text-gray-400 hover:text-gray-600 transition-colors">
                         <ArrowLeft size={20} />
                     </Link>
+                    <ThemeToggle />
                     <div className="flex items-center gap-2">
                         <BarChart2 size={20} className="text-blue-600" />
                         <h1 className="text-lg font-semibold text-gray-900">Аналитика</h1>
+                    </div>
+                    <div className="ml-auto">
+                        <AccountMenu />
                     </div>
                 </div>
             </header>
@@ -117,7 +122,7 @@ export default function AnalyticsPage() {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-1">
                             <Clock size={15} className="text-blue-500" />
                             <p className="text-xs text-gray-500">Всего времени</p>
@@ -126,7 +131,7 @@ export default function AnalyticsPage() {
                         <p className="text-xs text-gray-400 mt-1">{completed.length} сессий</p>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-1">
                             <Zap size={15} className="text-green-500" />
                             <p className="text-xs text-gray-500">Среднее время</p>
@@ -135,7 +140,7 @@ export default function AnalyticsPage() {
                         <p className="text-xs text-gray-400 mt-1">на сессию</p>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-1">
                             <AlertTriangle size={15} className="text-amber-500" />
                             <p className="text-xs text-gray-500">Отвлечения</p>
@@ -146,7 +151,7 @@ export default function AnalyticsPage() {
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-1">
                             <BarChart2 size={15} className="text-red-400" />
                             <p className="text-xs text-gray-500">Прервано</p>
@@ -159,7 +164,7 @@ export default function AnalyticsPage() {
 
                 </div>
 
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
                     <div className="px-5 py-3 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-900 text-sm">История сессий</h2>
                     </div>
@@ -172,7 +177,7 @@ export default function AnalyticsPage() {
                         <div className="px-5 py-8 text-center text-red-500 text-sm">{error}</div>
                     ) : sessions.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-16 gap-2">
-                            <Clock size={32} className="text-gray-200" />
+                            <Clock size={32} className="text-gray-200 dark:text-gray-700" />
                             <p className="text-gray-400 text-sm">Нет сессий за выбранный период</p>
                         </div>
                     ) : (

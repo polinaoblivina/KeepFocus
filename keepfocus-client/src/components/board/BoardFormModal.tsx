@@ -31,7 +31,7 @@ export default function BoardFormModal({initialTitle = '', initialDescription = 
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div className="bg-surface rounded-2xl shadow-xl w-full max-w-md p-6">
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-5">
                     {isEditing ? 'Редактировать доску' : 'Новая доска'}

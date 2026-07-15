@@ -9,6 +9,8 @@ namespace KeepFocus.Domain.Entities
     {
         public Email Email { get; private set; }
         public string PasswordHash { get; private set; }
+        public string? Name { get; private set; }
+        public string? AvatarUrl { get; private set; }
         public DateTime CreatedAt { get; private set; }
         private User() : base() { }
 
@@ -27,6 +29,16 @@ namespace KeepFocus.Domain.Entities
         public void UpdatePasswordHash(string newHash)
         {
             PasswordHash = newHash;
+        }
+
+        public void UpdateName(string name)
+        {
+            Name = name;
+        }
+
+        public void UpdateAvatar(string? url)
+        {
+            AvatarUrl = url;
         }
     }
 }

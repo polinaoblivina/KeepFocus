@@ -71,3 +71,11 @@ export interface ApiError {
     code?: string;
     errors?: string[];
 }
+
+export interface ProfileDto {
+    userId: string;
+    email: string;
+    name: string | null;
+    avatarUrl: string | null;
+    createdAt: string;
+}

@@ -32,7 +32,7 @@ export default function KanbanCard({ card, listId, boardId, onDelete, onUpdate, 
                 {...attributes}
                 {...listeners}
                 onClick={() => setShowModal(true)}
-                className="group bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                className="group bg-surface rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
                 <p className="text-sm text-gray-900 font-medium">{card.title}</p>
 
@@ -72,7 +72,7 @@ export default function KanbanCard({ card, listId, boardId, onDelete, onUpdate, 
                     <button
                         onPointerDown={e => e.stopPropagation()}
                         onClick={e => { e.stopPropagation(); setConfirmDelete(true); }}
-                        className="ml-auto p-1 text-gray-300 hover:text-red-500 rounded transition-colors"
+                        className="ml-auto p-1 text-gray-300 dark:text-gray-500 hover:text-red-500 rounded transition-colors"
                     >
                         <Trash2 size={13} />
                     </button>

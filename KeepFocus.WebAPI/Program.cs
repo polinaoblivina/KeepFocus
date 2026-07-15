@@ -28,6 +28,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors("Frontend");
 
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

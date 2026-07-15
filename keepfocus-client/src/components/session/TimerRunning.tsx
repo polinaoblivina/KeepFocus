@@ -28,9 +28,9 @@ export default function TimerRunning({ session, elapsed, status, onPauseResume, 
                 />
 
                 <p className="text-xs text-gray-400">
-                    {session.type === 'Pomodoro' ? '🍅 Pomodoro' : `⚙️ ${Math.floor(session.plannedDurationSeconds / 60)} мин`}
+                    {session.type === 'Pomodoro' ? 'Pomodoro' : `${Math.floor(session.plannedDurationSeconds / 60)} мин`}
                     {' · '}
-                    {session.mode === 'Soft' ? '🌊 Soft' : '🔥 Hard'}
+                    {session.mode === 'Soft' ? 'Soft' : 'Hard'}
                 </p>
 
                 <div className="flex gap-3 w-full">

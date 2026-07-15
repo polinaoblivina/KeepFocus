@@ -20,7 +20,7 @@ export default function ChecklistItemRow({ item, onToggle, onUpdate, onRemove }:
     }
 
     return (
-        <div className="group flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-white transition-colors">
+        <div className="group flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-surface transition-colors">
             <button
                 onClick={onToggle}
                 className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${item.isChecked ? 'bg-blue-500 border-blue-500' : 'border-gray-300 hover:border-blue-400'
@@ -41,7 +41,7 @@ export default function ChecklistItemRow({ item, onToggle, onUpdate, onRemove }:
                     onBlur={handleBlur}
                     onKeyDown={e => e.key === 'Enter' && handleBlur()}
                     autoFocus
-                    className="flex-1 text-sm bg-white border border-blue-400 rounded px-2 py-0.5 focus:outline-none"
+                    className="flex-1 text-sm bg-surface border border-blue-400 rounded px-2 py-0.5 focus:outline-none"
                 />
             ) : (
                 <span

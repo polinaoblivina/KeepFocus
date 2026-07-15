@@ -2,6 +2,7 @@
 using KeepFocus.Domain.Interfaces;
 using KeepFocus.Infrastructure.Authentication;
 using KeepFocus.Infrastructure.Persistence;
+using KeepFocus.Infrastructure.Storage;
 using KeepFocus.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace KeepFocus.Infrastructure
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IAvatarStorage, LocalAvatarStorage>();
 
             var secret = configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
             services

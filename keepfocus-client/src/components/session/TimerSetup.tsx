@@ -27,7 +27,7 @@ export default function TimerSetup({ mode, type, customMins, starting, onModeCha
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
-                            {m === 'Soft' ? '🌊 Soft' : '🔥 Hard'}
+                            {m === 'Soft' ? 'Soft' : 'Hard'}
                         </button>
                     ))}
                 </div>
@@ -50,7 +50,7 @@ export default function TimerSetup({ mode, type, customMins, starting, onModeCha
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
-                            {t === 'Pomodoro' ? '🍅 25 мин' : '⚙️ Своя'}
+                            {t === 'Pomodoro' ? '25 мин' : 'Своя'}
                         </button>
                     ))}
                 </div>

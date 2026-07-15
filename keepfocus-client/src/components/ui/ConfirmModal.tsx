@@ -11,7 +11,7 @@ interface ConfirmModalProps {
 export default function ConfirmModal({ title, message, confirmText = 'Подтвердить', cancelText = 'Отмена', danger = false, onConfirm, onCancel,}: ConfirmModalProps) {
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <div className="bg-surface rounded-2xl shadow-xl w-full max-w-sm p-6">
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
                 <p className="text-sm text-gray-500 mb-6">{message}</p>
