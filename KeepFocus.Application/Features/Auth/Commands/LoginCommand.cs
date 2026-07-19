@@ -2,6 +2,7 @@
 using KeepFocus.Application.Common.Errors;
 using KeepFocus.Application.Common.Interfaces;
 using KeepFocus.Application.Features.Auth.DTOs;
+using KeepFocus.Domain.Entities;
 using KeepFocus.Domain.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -18,7 +19,7 @@ namespace KeepFocus.Application.Features.Auth.Commands
         }
     }
 
-    public sealed class LoginCommandHandler(IUserRepository users, IJwtService jwt, IPasswordHasher hasher) : IRequestHandler<LoginCommand, Result<AuthDto>>
+    public sealed class LoginCommandHandler(IUserRepository users, IRefreshTokenRepository refreshTokens, IJwtService jwt, IPasswordHasher hasher) : IRequestHandler<LoginCommand, Result<AuthDto>>
     {
         public async Task<Result<AuthDto>> Handle(LoginCommand cmd, CancellationToken ct)
         {
@@ -26,8 +27,14 @@ namespace KeepFocus.Application.Features.Auth.Commands
             if (user is null || !hasher.Verify(cmd.Password, user.PasswordHash))
                 return Error.Unauthorized("Invalid email or password.", "INVALID_CREDENTIALS");
 
-            var token = jwt.GenerateToken(user.Id, user.Email.Value);
-            return new AuthDto(token, user.Id, user.Email.Value);
+            var accessToken = jwt.GenerateAccessToken(user.Id, user.Email.Value);
+
+            var refreshToken = jwt.GenerateRefreshToken();
+            var refreshTokenEntity = RefreshToken.Create(user.Id, jwt.HashRefreshToken(refreshToken), DateTime.UtcNow.AddDays(30));
+            await refreshTokens.AddAsync(refreshTokenEntity, ct);
+            await refreshTokens.SaveChangesAsync(ct);
+
+            return new AuthDto(accessToken, user.Id, user.Email.Value, refreshToken);
         }
     }
 }

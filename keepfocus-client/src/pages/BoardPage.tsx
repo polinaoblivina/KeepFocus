@@ -8,7 +8,7 @@ import ThemeToggle from '../components/ui/ThemeToggle';
 import AccountMenu from '../components/layout/AccountMenu';
 import BoardBackgroundModal from '../components/board/BoardBackgroundModal';
 import { useBoardBackground } from '../hooks/UseBoardBackground';
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, closestCorners, KeyboardSensor } from '@dnd-kit/core';
+import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors, closestCorners, KeyboardSensor } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import KanbanList from '../components/board/KanbanList';
 import FocusTimerModal from '../components/session/FocusTimerModal';
@@ -32,7 +32,8 @@ export default function BoardPage() {
     const { bg, setBg } = useBoardBackground(boardId ?? null);
 
     const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 

@@ -10,3 +10,7 @@ export async function login(email: string, password: string): Promise<AuthDto> {
     const response = await client.post<AuthDto>('/api/auth/login', { email, password });
     return response.data;
 }
+
+export async function logout(): Promise<void> {
+    await client.post('/api/auth/logout');
+}

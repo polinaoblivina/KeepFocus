@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { User as UserIcon, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { getProfile } from '../../api/profile';
+import { logout as logoutApi } from '../../api/auth';
 
 export default function AccountMenu() {
     const [open, setOpen] = useState(false);
@@ -32,6 +33,7 @@ export default function AccountMenu() {
     }, []);
 
     function handleLogout() {
+        logoutApi().catch(() => { /* refresh-токен и так протухнет сам, локальный выход важнее */ });
         logout();
         navigate('/login');
     }

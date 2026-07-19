@@ -15,6 +15,7 @@ interface AuthStore {
     login: (token: string, user: User) => void;
     logout: () => void;
     updateUser: (patch: Partial<User>) => void;
+    setToken: (token: string) => void;
 }
 
 
@@ -43,5 +44,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         const updated = { ...current, ...patch };
         localStorage.setItem('user', JSON.stringify(updated));
         set({ user: updated });
+    },
+    setToken: (token) => {
+        localStorage.setItem('token', token);
+        set({ token, isAuthenticated: true });
     },
 }));

@@ -17,6 +17,7 @@ namespace KeepFocus.Infrastructure.Persistence
         public DbSet<FocusSession> FocusSessions => Set<FocusSession>();
         public DbSet<TabEvent> TabEvents => Set<TabEvent>();
         public DbSet<SessionBreak> SessionBreaks => Set<SessionBreak>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

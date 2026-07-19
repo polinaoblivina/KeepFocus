@@ -1,36 +1,78 @@
 import axios from 'axios';
-import type { ApiError } from './types';
+import type { ApiError, AuthDto } from './types';
+import { useAuthStore } from '../store/authStore';
 
 const client = axios.create({
     baseURL: '/',
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
 client.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = useAuthStore.getState().token;
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
-    return config; 
+    return config;
 });
+
+function redirectToLogin() {
+    useAuthStore.getState().logout();
+    if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+        window.location.href = '/login';
+    }
+}
+
+// Access-токен живёт 15 минут, поэтому 401 от любого запроса, кроме самих auth-эндпоинтов,
+// сначала пытаемся вылечить обновлением через refresh-токен (лежит в httpOnly cookie),
+// и только если это тоже не удалось - разлогиниваем пользователя.
+let refreshPromise: Promise<string> | null = null;
+
+function refreshAccessToken(): Promise<string> {
+    if (!refreshPromise) {
+        refreshPromise = axios
+            .post<AuthDto>('/api/auth/refresh', {}, { withCredentials: true })
+            .then(({ data }) => {
+                useAuthStore.getState().setToken(data.token);
+                return data.token;
+            })
+            .finally(() => {
+                refreshPromise = null;
+            });
+    }
+    return refreshPromise;
+}
 
 client.interceptors.response.use(
     (response) => response,
 
-    (error) => {
-        if (error.response?.status === 401) {
-            if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
-            }
+    async (error) => {
+        const originalRequest = error.config as (typeof error.config & { _retry?: boolean }) | undefined;
+        const isAuthEndpoint = originalRequest?.url?.includes('/api/auth/');
+
+        if (error.response?.status !== 401 || !originalRequest || isAuthEndpoint) {
+            if (error.response?.status === 401 && isAuthEndpoint) redirectToLogin();
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        if (originalRequest._retry) {
+            redirectToLogin();
+            return Promise.reject(error);
+        }
+        originalRequest._retry = true;
+
+        try {
+            const newToken = await refreshAccessToken();
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return client(originalRequest);
+        } catch {
+            redirectToLogin();
+            return Promise.reject(error);
+        }
     }
 );
 
