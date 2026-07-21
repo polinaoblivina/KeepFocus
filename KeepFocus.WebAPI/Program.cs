@@ -28,6 +28,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors("Frontend");
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthentication();
@@ -36,5 +37,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<SessionHub>("/hubs/session");
+app.MapFallbackToFile("index.html");
 
 app.Run();

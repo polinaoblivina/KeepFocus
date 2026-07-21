@@ -61,7 +61,11 @@ export default function KanbanList({ list, boardId, onAddCard, onDeleteCard, onD
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                             onBlur={handleRenameBlur}
-                            onKeyDown={e => e.key === 'Enter' && handleRenameBlur()}
+                            onKeyDown={e => {
+                                e.stopPropagation();
+                                if (e.key === 'Enter') handleRenameBlur();
+                            }}
+                            onKeyUp={e => e.stopPropagation()}
                             onPointerDown={e => e.stopPropagation()}
                             autoFocus
                             className="flex-1 px-2 py-1 text-sm font-semibold bg-surface rounded border border-blue-400 focus:outline-none"

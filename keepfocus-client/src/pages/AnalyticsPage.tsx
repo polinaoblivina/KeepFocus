@@ -1,11 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getSessionHistory } from '../api/sessions';
 import { getErrorMessage } from '../api/client';
 import type { SessionDto } from '../api/types';
-import { ArrowLeft, Clock, Zap, AlertTriangle, BarChart2 } from 'lucide-react';
+import { ArrowLeft, Clock, Flame, Trophy, BarChart2, X } from 'lucide-react';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import AccountMenu from '../components/layout/AccountMenu';
+import FocusCalendar from '../components/analytics/FocusCalendar';
+import { dateKey } from '../utils/date';
+
+const HISTORY_DAYS = 365;
+
 function formatDuration(seconds: number): string {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -41,25 +46,39 @@ function statusLabel(status: SessionDto['status']): string {
     }
 }
 
+function computeStreak(dailyTotals: Record<string, number>): number {
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    if (!dailyTotals[dateKey(cursor)]) {
+        cursor.setDate(cursor.getDate() - 1);
+    }
+    let streak = 0;
+    while (dailyTotals[dateKey(cursor)] > 0) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+}
+
 export default function AnalyticsPage() {
     const [sessions, setSessions] = useState<SessionDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const [from, setFrom] = useState(() => {
-        const d = new Date();
-        d.setDate(d.getDate() - 30);
-        return d.toISOString().split('T')[0];
-    });
-    const [to, setTo] = useState(() => new Date().toISOString().split('T')[0]);
+    const today = useMemo(() => new Date(), []);
+    const [viewYear, setViewYear] = useState(today.getFullYear());
+    const [viewMonth, setViewMonth] = useState(today.getMonth());
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     useEffect(() => {
         async function load() {
             setLoading(true);
             try {
+                const from = new Date();
+                from.setDate(from.getDate() - HISTORY_DAYS);
                 const data = await getSessionHistory(
-                    from + 'T00:00:00Z',
-                    to + 'T23:59:59Z'
+                    from.toISOString().split('T')[0] + 'T00:00:00Z',
+                    new Date().toISOString().split('T')[0] + 'T23:59:59Z'
                 );
                 setSessions(data);
             } catch (err) {
@@ -69,14 +88,58 @@ export default function AnalyticsPage() {
             }
         }
         load();
-    }, [from, to]);
+    }, []);
 
     const completed = sessions.filter(s => s.status === 'Completed');
-    const abandoned = sessions.filter(s => s.status === 'Abandoned');
+
+    const dailyTotals = useMemo(() => {
+        const totals: Record<string, number> = {};
+        for (const s of completed) {
+            const key = dateKey(new Date(s.startedAt));
+            totals[key] = (totals[key] ?? 0) + s.accumulatedSeconds;
+        }
+        return totals;
+    }, [completed]);
+
+    const streak = useMemo(() => computeStreak(dailyTotals), [dailyTotals]);
+
+    const bestDay = useMemo(() => {
+        let bestKey: string | null = null;
+        let bestSeconds = 0;
+        for (const [key, seconds] of Object.entries(dailyTotals)) {
+            if (seconds > bestSeconds) { bestSeconds = seconds; bestKey = key; }
+        }
+        return bestKey ? { key: bestKey, seconds: bestSeconds } : null;
+    }, [dailyTotals]);
 
     const totalSeconds = completed.reduce((sum, s) => sum + s.accumulatedSeconds, 0);
-    const totalDistraction = completed.reduce((sum, s) => sum + s.totalDistractionSeconds, 0);
     const avgSeconds = completed.length > 0 ? Math.floor(totalSeconds / completed.length) : 0;
+    const distractionCount = completed.reduce((sum, s) => sum + s.distractionCount, 0);
+
+    const minMonthIndex = (today.getFullYear() * 12 + today.getMonth()) - 11;
+    const viewMonthIndex = viewYear * 12 + viewMonth;
+    const canGoPrev = viewMonthIndex > minMonthIndex;
+    const canGoNext = viewMonthIndex < today.getFullYear() * 12 + today.getMonth();
+
+    function prevMonth() {
+        setViewMonth(m => {
+            if (m === 0) { setViewYear(y => y - 1); return 11; }
+            return m - 1;
+        });
+    }
+
+    function nextMonth() {
+        setViewMonth(m => {
+            if (m === 11) { setViewYear(y => y + 1); return 0; }
+            return m + 1;
+        });
+    }
+
+    const selectedDaySessions = selectedDate
+        ? sessions
+            .filter(s => dateKey(new Date(s.startedAt)) === selectedDate)
+            .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())
+        : [];
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -99,123 +162,131 @@ export default function AnalyticsPage() {
 
             <main className="max-w-4xl mx-auto px-6 py-8">
 
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-500">С:</label>
-                        <input
-                            type="date"
-                            value={from}
-                            onChange={e => setFrom(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <p className="text-gray-400 text-sm">Загрузка...</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-500">По:</label>
-                        <input
-                            type="date"
-                            value={to}
-                            onChange={e => setTo(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                </div>
+                ) : error ? (
+                    <div className="px-5 py-8 text-center text-red-500 text-sm">{error}</div>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-
-                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <Clock size={15} className="text-blue-500" />
-                            <p className="text-xs text-gray-500">Всего времени</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatDuration(totalSeconds)}</p>
-                        <p className="text-xs text-gray-400 mt-1">{completed.length} сессий</p>
-                    </div>
-
-                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <Zap size={15} className="text-green-500" />
-                            <p className="text-xs text-gray-500">Среднее время</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatDuration(avgSeconds)}</p>
-                        <p className="text-xs text-gray-400 mt-1">на сессию</p>
-                    </div>
-
-                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <AlertTriangle size={15} className="text-amber-500" />
-                            <p className="text-xs text-gray-500">Отвлечения</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatDuration(totalDistraction)}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                            {completed.reduce((sum, s) => sum + s.distractionCount, 0)} раз
-                        </p>
-                    </div>
-
-                    <div className="bg-surface rounded-xl border border-gray-200 p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <BarChart2 size={15} className="text-red-400" />
-                            <p className="text-xs text-gray-500">Прервано</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">{abandoned.length}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                            {sessions.length > 0 ? `${Math.round((abandoned.length / sessions.length) * 100)}% от всех` : '—'}
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="px-5 py-3 border-b border-gray-100">
-                        <h2 className="font-semibold text-gray-900 text-sm">История сессий</h2>
-                    </div>
-
-                    {loading ? (
-                        <div className="flex items-center justify-center py-16">
-                            <p className="text-gray-400 text-sm">Загрузка...</p>
-                        </div>
-                    ) : error ? (
-                        <div className="px-5 py-8 text-center text-red-500 text-sm">{error}</div>
-                    ) : sessions.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 gap-2">
-                            <Clock size={32} className="text-gray-200 dark:text-gray-700" />
-                            <p className="text-gray-400 text-sm">Нет сессий за выбранный период</p>
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-gray-50">
-                            {sessions.map(session => (
-                                <div key={session.id} className="px-5 py-3 flex items-center gap-4 hover:bg-gray-50 transition-colors">
-
-                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${statusColor(session.status)}`}>
-                                        {statusLabel(session.status)}
-                                    </span>
-
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-gray-900">
-                                            {session.type === 'Pomodoro' ? 'Pomodoro' : 'Custom'}
-                                            {' · '}
-                                            {session.mode === 'Soft' ? 'Soft' : 'Hard'}
-                                        </p>
-                                        <p className="text-xs text-gray-400 mt-0.5">
-                                            {formatDate(session.startedAt)}
-                                        </p>
-                                    </div>
-
-                                    <div className="text-right flex-shrink-0">
-                                        <p className="text-sm font-medium text-gray-900">
-                                            {formatDuration(session.accumulatedSeconds)}
-                                        </p>
-                                        {session.distractionCount > 0 && (
-                                            <p className="text-xs text-amber-500">
-                                                {session.distractionCount} отвл.
-                                            </p>
-                                        )}
-                                    </div>
-
+                            <div className="bg-surface rounded-xl border border-gray-200 p-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Flame size={15} className="text-orange-500" />
+                                    <p className="text-xs text-gray-500">Текущий стрик</p>
                                 </div>
-                            ))}
+                                <p className="text-2xl font-bold text-gray-900">{streak} {streak === 1 ? 'день' : streak >= 2 && streak <= 4 ? 'дня' : 'дней'}</p>
+                                <p className="text-xs text-gray-400 mt-1">подряд с фокус-сессией</p>
+                            </div>
+
+                            <div className="bg-surface rounded-xl border border-gray-200 p-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Trophy size={15} className="text-amber-500" />
+                                    <p className="text-xs text-gray-500">Лучший день</p>
+                                </div>
+                                <p className="text-2xl font-bold text-gray-900">
+                                    {bestDay ? formatDuration(bestDay.seconds) : '—'}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                    {bestDay ? new Date(bestDay.key).toLocaleDateString('ru', { day: 'numeric', month: 'long' }) : 'пока нет данных'}
+                                </p>
+                            </div>
+
+                            <div className="bg-surface rounded-xl border border-gray-200 p-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Clock size={15} className="text-blue-500" />
+                                    <p className="text-xs text-gray-500">Всего за год</p>
+                                </div>
+                                <p className="text-2xl font-bold text-gray-900">{formatDuration(totalSeconds)}</p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                    {completed.length} сессий · в среднем {formatDuration(avgSeconds)}
+                                    {distractionCount > 0 && ` · ${distractionCount} отвлечений`}
+                                </p>
+                            </div>
+
                         </div>
-                    )}
-                </div>
+
+                        <div className="mb-6">
+                            <FocusCalendar
+                                year={viewYear}
+                                month={viewMonth}
+                                dailyTotals={dailyTotals}
+                                selectedDate={selectedDate}
+                                onSelectDate={d => setSelectedDate(prev => prev === d ? null : d)}
+                                onPrevMonth={prevMonth}
+                                onNextMonth={nextMonth}
+                                canGoPrev={canGoPrev}
+                                canGoNext={canGoNext}
+                            />
+                        </div>
+
+                        <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
+                            <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                                <h2 className="font-semibold text-gray-900 text-sm">
+                                    {selectedDate
+                                        ? new Date(selectedDate).toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' })
+                                        : 'Сессии за день'}
+                                </h2>
+                                {selectedDate && (
+                                    <button
+                                        onClick={() => setSelectedDate(null)}
+                                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                )}
+                            </div>
+
+                            {!selectedDate ? (
+                                <div className="flex flex-col items-center justify-center py-16 gap-2">
+                                    <Clock size={32} className="text-gray-200 dark:text-gray-700" />
+                                    <p className="text-gray-400 text-sm">Нажмите на день в календаре, чтобы увидеть сессии</p>
+                                </div>
+                            ) : selectedDaySessions.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-16 gap-2">
+                                    <Clock size={32} className="text-gray-200 dark:text-gray-700" />
+                                    <p className="text-gray-400 text-sm">В этот день сессий не было</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-50">
+                                    {selectedDaySessions.map(session => (
+                                        <div key={session.id} className="px-5 py-3 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+
+                                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${statusColor(session.status)}`}>
+                                                {statusLabel(session.status)}
+                                            </span>
+
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm text-gray-900">
+                                                    {session.type === 'Pomodoro' ? 'Pomodoro' : 'Custom'}
+                                                    {' · '}
+                                                    {session.mode === 'Soft' ? 'Soft' : 'Hard'}
+                                                </p>
+                                                <p className="text-xs text-gray-400 mt-0.5">
+                                                    {formatDate(session.startedAt)}
+                                                </p>
+                                            </div>
+
+                                            <div className="text-right flex-shrink-0">
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {formatDuration(session.accumulatedSeconds)}
+                                                </p>
+                                                {session.distractionCount > 0 && (
+                                                    <p className="text-xs text-amber-500">
+                                                        {session.distractionCount} отвл.
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
 
             </main>
         </div>
