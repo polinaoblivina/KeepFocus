@@ -17,7 +17,7 @@ export default function AccountMenu() {
         if (user && user.name === undefined) {
             getProfile()
                 .then(profile => updateUser({ name: profile.name, avatarUrl: profile.avatarUrl }))
-                .catch(() => { /* ignore, keep email-only fallback */ });
+                .catch(() => {});
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -33,7 +33,7 @@ export default function AccountMenu() {
     }, []);
 
     function handleLogout() {
-        logoutApi().catch(() => { /* refresh-токен и так протухнет сам, локальный выход важнее */ });
+        logoutApi().catch(() => {});
         logout();
         navigate('/login');
     }

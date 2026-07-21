@@ -39,7 +39,7 @@ export default function ProfilePage() {
                 updateUser({ name: profile.name, avatarUrl: profile.avatarUrl });
                 setName(profile.name || '');
             })
-            .catch(() => { /* fall back to whatever is already in the store */ });
+            .catch(() => {});
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

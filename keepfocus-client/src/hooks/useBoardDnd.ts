@@ -96,7 +96,7 @@ export function useBoardDnd({ board, boardId, setBoard, setError, setActiveCard,
                 await moveCard(boardId, activeId, targetListId, newPosition);
             } catch (err) {
                 setError(getErrorMessage(err));
-                try { const data = await getBoard(boardId); setBoard(data); } catch { /**/ }
+                try { const data = await getBoard(boardId); setBoard(data); } catch {}
             }
             return;
         }
@@ -125,7 +125,7 @@ export function useBoardDnd({ board, boardId, setBoard, setError, setActiveCard,
                 await reorderLists(boardId, withPositions.map(l => ({ listId: l.id, position: l.position })));
             } catch (err) {
                 setError(getErrorMessage(err));
-                try { const data = await getBoard(boardId); setBoard(data); } catch { /**/ }
+                try { const data = await getBoard(boardId); setBoard(data); } catch {}
             }
             return;
         }
@@ -170,7 +170,7 @@ export function useBoardDnd({ board, boardId, setBoard, setError, setActiveCard,
                 await moveCard(boardId, activeId, originalSourceList.id, newPosition);
             } catch (err) {
                 setError(getErrorMessage(err));
-                try { const data = await getBoard(boardId); setBoard(data); } catch { /**/ }
+                try { const data = await getBoard(boardId); setBoard(data); } catch {}
             }
             return;
         }
@@ -199,7 +199,7 @@ export function useBoardDnd({ board, boardId, setBoard, setError, setActiveCard,
             await moveCard(boardId, activeId, targetListId, newPosition);
         } catch (err) {
             setError(getErrorMessage(err));
-            try { const data = await getBoard(boardId); setBoard(data); } catch { /**/ }
+            try { const data = await getBoard(boardId); setBoard(data); } catch {}
         }
     }
 

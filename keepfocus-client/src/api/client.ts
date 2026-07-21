@@ -27,9 +27,6 @@ function redirectToLogin() {
     }
 }
 
-// Access-токен живёт 15 минут, поэтому 401 от любого запроса, кроме самих auth-эндпоинтов,
-// сначала пытаемся вылечить обновлением через refresh-токен (лежит в httpOnly cookie),
-// и только если это тоже не удалось - разлогиниваем пользователя.
 let refreshPromise: Promise<string> | null = null;
 
 function refreshAccessToken(): Promise<string> {

@@ -14,4 +14,5 @@
     <Project Path="KeepFocus.Infrastructure/KeepFocus.Infrastructure.csproj" Id="a600d060-a9fb-4b34-a583-e6f7c6da24d2" />
     <Project Path="KeepFocus.WebAPI/KeepFocus.WebAPI.csproj" />
   </Folder>
+  <Project Path="KeepFocus.Application.Tests/KeepFocus.Application.Tests.csproj" />
 </Solution>

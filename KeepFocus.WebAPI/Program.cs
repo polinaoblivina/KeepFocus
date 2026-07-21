@@ -1,7 +1,9 @@
 using KeepFocus.Application;
 using KeepFocus.Infrastructure;
+using KeepFocus.Infrastructure.Persistence;
 using KeepFocus.WebAPI.Hubs;
 using KeepFocus.WebAPI.Middleware;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,11 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+}
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

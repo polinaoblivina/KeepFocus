@@ -23,7 +23,7 @@ export function useBoardBackground(boardId: string | null) {
         try {
             if (value) localStorage.setItem(keyFor(boardId), value);
             else localStorage.removeItem(keyFor(boardId));
-        } catch { /**/ }
+        } catch {}
     }, [boardId]);
 
     return { bg, setBg };

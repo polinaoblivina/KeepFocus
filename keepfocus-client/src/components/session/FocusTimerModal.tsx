@@ -35,7 +35,7 @@ function playCompletionSound() {
             osc.start(t);
             osc.stop(t + 0.45);
         });
-    } catch {/**/}
+    } catch {}
 }
 
 async function requestNotificationPermission() {
@@ -210,9 +210,7 @@ export default function FocusTimerModal({ cardId, card, boardId, onClose, onCard
             stopTimer();
             try {
                 await completeSession(session.id);
-            } catch {
-                //skip
-            }
+            } catch {}
         }
         connectionRef.current?.stop();
         setSession(null);
