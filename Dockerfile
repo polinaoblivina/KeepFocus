@@ -1,7 +1,7 @@
 FROM node:22-slim AS client-build
 WORKDIR /src/keepfocus-client
 COPY keepfocus-client/package.json keepfocus-client/package-lock.json ./
-RUN npm ci
+RUN npm install
 COPY keepfocus-client/ ./
 RUN npm run build
 
